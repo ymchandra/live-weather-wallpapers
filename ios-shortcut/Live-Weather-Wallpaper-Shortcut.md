@@ -37,11 +37,11 @@ to iCloud Drive folder:
    - `Thunderstorm` → `rain`
    - `Snow` → `cold`
 6. **Get Dictionary Value** for weather Condition text (fallback `calm`)
-7. **If** Temperature is greater than or equal to `30`
+7. **If** Temperature is greater than or equal to `30°C`
    - Set variable `Theme` to `hot`
-8. **Otherwise If** Temperature is less than or equal to `8`
+8. **Otherwise If** Temperature is less than or equal to `8°C`
    - Set variable `Theme` to `cold`
-9. **Otherwise If** Wind Speed is greater than or equal to `25`
+9. **Otherwise If** Wind Speed is greater than or equal to `25 km/h`
    - Set variable `Theme` to `wind`
 10. **Otherwise**
     - Set variable `Theme` to Dictionary result (or `calm`)
