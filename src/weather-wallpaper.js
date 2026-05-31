@@ -13,6 +13,17 @@ const PARTICLE_DENSITY_DIVISOR = 10;
 const OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast";
 const OPEN_METEO_CURRENT_FIELDS = "temperature_2m,weather_code,wind_speed_10m";
 const SNOW_CODES = new Set([71, 73, 75, 77, 85, 86]);
+const WIND_SWIRL_COUNT = 120;
+const HAZE_LINE_COUNT = 70;
+const CALM_SWIRL_COUNT = 28;
+const RAIN_RIPPLE_TRIGGER_CHANCE = 0.08;
+const RAIN_RIPPLE_Y_OFFSET = 8;
+const RAIN_RIPPLE_INITIAL_RADIUS = 2;
+const RAIN_RIPPLE_INITIAL_ALPHA = 0.4;
+const SUN_X_RATIO = 0.8;
+const SUN_Y_RATIO = 0.2;
+const SUN_INNER_RADIUS = 8;
+const SUN_OUTER_RADIUS_RATIO = 0.4;
 
 const THEMES = {
   hot: { label: "Hot", top: "#3a1f1c", bottom: "#e2853c", accent: "#ffd37a" },
@@ -51,6 +62,10 @@ function weatherCodeToCondition({ weatherCode, tempC, windKmh }) {
   return "calm";
 }
 
+function rounded(value, fallback = 0) {
+  return Math.round(Number(value ?? fallback));
+}
+
 function resetScene(condition) {
   state.condition = THEMES[condition] ? condition : "calm";
   state.particles = [];
@@ -80,7 +95,7 @@ function resetScene(condition) {
       });
     }
   } else if (state.condition === "wind") {
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < WIND_SWIRL_COUNT; i++) {
       state.swirls.push({
         x: random(0, canvas.width),
         y: random(0, canvas.height),
@@ -90,7 +105,7 @@ function resetScene(condition) {
       });
     }
   } else if (state.condition === "hot") {
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < HAZE_LINE_COUNT; i++) {
       state.haze.push({
         y: random(0, canvas.height),
         amp: random(4, 14),
@@ -99,7 +114,7 @@ function resetScene(condition) {
       });
     }
   } else {
-    for (let i = 0; i < 28; i++) {
+    for (let i = 0; i < CALM_SWIRL_COUNT; i++) {
       state.swirls.push({
         x: random(0, canvas.width),
         y: random(0, canvas.height * 0.7),
@@ -130,7 +145,14 @@ function drawRain() {
     ctx.stroke();
     p.y += p.v;
     if (p.y > canvas.height) {
-      if (Math.random() < 0.08) state.ripples.push({ x: p.x, y: canvas.height - 8, r: 2, a: 0.4 });
+      if (Math.random() < RAIN_RIPPLE_TRIGGER_CHANCE) {
+        state.ripples.push({
+          x: p.x,
+          y: canvas.height - RAIN_RIPPLE_Y_OFFSET,
+          r: RAIN_RIPPLE_INITIAL_RADIUS,
+          a: RAIN_RIPPLE_INITIAL_ALPHA,
+        });
+      }
       p.y = random(-80, -20);
       p.x = random(0, canvas.width);
     }
@@ -184,7 +206,10 @@ function drawWind(strong) {
 }
 
 function drawHot() {
-  const sun = ctx.createRadialGradient(canvas.width * 0.8, canvas.height * 0.2, 8, canvas.width * 0.8, canvas.height * 0.2, canvas.width * 0.4);
+  const sunX = canvas.width * SUN_X_RATIO;
+  const sunY = canvas.height * SUN_Y_RATIO;
+  const sunOuterRadius = canvas.width * SUN_OUTER_RADIUS_RATIO;
+  const sun = ctx.createRadialGradient(sunX, sunY, SUN_INNER_RADIUS, sunX, sunY, sunOuterRadius);
   sun.addColorStop(0, "rgba(255,220,150,0.55)");
   sun.addColorStop(1, "rgba(255,220,150,0)");
   ctx.fillStyle = sun;
@@ -249,9 +274,9 @@ async function detectWeatherCondition() {
     windKmh: Number(current.wind_speed_10m ?? 0),
   });
 
-  metaEl.textContent = `${Math.round(Number(current.temperature_2m ?? 0))}°C · wind ${Math.round(
-    Number(current.wind_speed_10m ?? 0)
-  )} km/h`;
+  const roundedTemp = rounded(current.temperature_2m);
+  const roundedWind = rounded(current.wind_speed_10m);
+  metaEl.textContent = `${roundedTemp}°C · wind ${roundedWind} km/h`;
   return next;
 }
 
