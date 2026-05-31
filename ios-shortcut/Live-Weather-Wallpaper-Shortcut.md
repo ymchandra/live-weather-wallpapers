@@ -39,7 +39,7 @@ Tip: open `index.html?condition=<type>` in Safari and take screenshots if you wa
    - Set variable `Theme` to `wind`
 10. **Otherwise**
     - Set variable `Theme` to Dictionary result (or `calm`)
-11. **Text**: `Shortcuts/WeatherWallpapers/[Theme].jpg`
+11. **Text**: `Shortcuts/WeatherWallpapers/` + *(Insert Variable: Theme)* + `.jpg`
 12. **Get File from Folder** (iCloud Drive) using that text path
 13. **Set Wallpaper Photo** (choose Lock Screen, Home Screen, or both)
 

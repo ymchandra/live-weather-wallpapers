@@ -12,6 +12,8 @@ const GEOLOCATION_MAX_AGE = 600000;
 const PARTICLE_DENSITY_DIVISOR = 10;
 const OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast";
 const OPEN_METEO_CURRENT_FIELDS = "temperature_2m,weather_code,wind_speed_10m";
+const RAIN_CODES = new Set([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99]);
+const CLOUD_CODES = new Set([1, 2, 3, 45, 48]);
 const SNOW_CODES = new Set([71, 73, 75, 77, 85, 86]);
 const WIND_SWIRL_COUNT = 120;
 const HAZE_LINE_COUNT = 70;
@@ -52,13 +54,10 @@ function random(min, max) {
 }
 
 function weatherCodeToCondition({ weatherCode, tempC, windKmh }) {
-  const rainCodes = new Set([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99]);
-  const cloudCodes = new Set([1, 2, 3, 45, 48]);
-
-  if (rainCodes.has(weatherCode)) return "rain";
+  if (RAIN_CODES.has(weatherCode)) return "rain";
   if (tempC <= COLD_TEMP_THRESHOLD || SNOW_CODES.has(weatherCode)) return "cold";
   if (windKmh >= WIND_SPEED_THRESHOLD) return "wind";
-  if (tempC >= HOT_TEMP_THRESHOLD && !cloudCodes.has(weatherCode)) return "hot";
+  if (tempC >= HOT_TEMP_THRESHOLD && !CLOUD_CODES.has(weatherCode)) return "hot";
   return "calm";
 }
 
