@@ -9,6 +9,10 @@ const HOT_TEMP_THRESHOLD = 30;
 const WIND_SPEED_THRESHOLD = 25;
 const GEOLOCATION_TIMEOUT = 10000;
 const GEOLOCATION_MAX_AGE = 600000;
+const PARTICLE_DENSITY_DIVISOR = 10;
+const OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast";
+const OPEN_METEO_CURRENT_FIELDS = "temperature_2m,weather_code,wind_speed_10m";
+const SNOW_CODES = new Set([71, 73, 75, 77, 85, 86]);
 
 const THEMES = {
   hot: { label: "Hot", top: "#3a1f1c", bottom: "#e2853c", accent: "#ffd37a" },
@@ -41,7 +45,7 @@ function weatherCodeToCondition({ weatherCode, tempC, windKmh }) {
   const cloudCodes = new Set([1, 2, 3, 45, 48]);
 
   if (rainCodes.has(weatherCode)) return "rain";
-  if (tempC <= COLD_TEMP_THRESHOLD || weatherCode === 71 || weatherCode === 73 || weatherCode === 75 || weatherCode === 77 || weatherCode === 85 || weatherCode === 86) return "cold";
+  if (tempC <= COLD_TEMP_THRESHOLD || SNOW_CODES.has(weatherCode)) return "cold";
   if (windKmh >= WIND_SPEED_THRESHOLD) return "wind";
   if (tempC >= HOT_TEMP_THRESHOLD && !cloudCodes.has(weatherCode)) return "hot";
   return "calm";
@@ -55,7 +59,7 @@ function resetScene(condition) {
   state.haze = [];
   conditionEl.textContent = `${THEMES[state.condition].label} Weather`;
 
-  const count = Math.floor((canvas.width + canvas.height) / 10);
+  const count = Math.floor((canvas.width + canvas.height) / PARTICLE_DENSITY_DIVISOR);
   if (state.condition === "rain") {
     for (let i = 0; i < count; i++) {
       state.particles.push({
@@ -230,7 +234,7 @@ async function detectWeatherCondition() {
   }
 
   const { latitude, longitude } = position.coords;
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,wind_speed_10m`;
+  const url = `${OPEN_METEO_BASE_URL}?latitude=${latitude}&longitude=${longitude}&current=${OPEN_METEO_CURRENT_FIELDS}`;
   const response = await fetch(url).catch(() => null);
   if (!response || !response.ok) {
     metaEl.textContent = "Weather API unavailable, showing calm fallback.";
