@@ -49,6 +49,14 @@ to iCloud Drive folder:
 12. **Get File from Folder** (iCloud Drive) using that text path
 13. **Set Wallpaper Photo** (choose Lock Screen, Home Screen, or both)
 
+### Optional tuning
+
+You can change these thresholds to match your local climate and preference:
+
+- Hot threshold: `30°C`
+- Cold threshold: `8°C`
+- Wind threshold: `25 km/h`
+
 ## 3) Automate it
 
 In Shortcuts → Automation:
