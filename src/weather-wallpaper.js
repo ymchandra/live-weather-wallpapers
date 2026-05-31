@@ -22,10 +22,12 @@ const RAIN_RIPPLE_TRIGGER_CHANCE = 0.08;
 const RAIN_RIPPLE_Y_OFFSET = 8;
 const RAIN_RIPPLE_INITIAL_RADIUS = 2;
 const RAIN_RIPPLE_INITIAL_ALPHA = 0.4;
+const RAIN_SLANT_OFFSET = 2.5;
 const SUN_X_RATIO = 0.8;
 const SUN_Y_RATIO = 0.2;
 const SUN_INNER_RADIUS = 8;
 const SUN_OUTER_RADIUS_RATIO = 0.4;
+const HAZE_SAMPLE_INTERVAL = 24;
 
 const THEMES = {
   hot: { label: "Hot", top: "#3a1f1c", bottom: "#e2853c", accent: "#ffd37a" },
@@ -140,7 +142,7 @@ function drawRain() {
   for (const p of state.particles) {
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
-    ctx.lineTo(p.x - 2.5, p.y + p.l);
+    ctx.lineTo(p.x - RAIN_SLANT_OFFSET, p.y + p.l);
     ctx.stroke();
     p.y += p.v;
     if (p.y > canvas.height) {
@@ -158,9 +160,11 @@ function drawRain() {
   }
 
   for (const rp of state.ripples) {
+    const radiusX = rp.r * 2;
+    const radiusY = rp.r;
     ctx.strokeStyle = `rgba(190,220,255,${rp.a})`;
     ctx.beginPath();
-    ctx.ellipse(rp.x, rp.y, rp.r * 2, rp.r, 0, 0, Math.PI * 2);
+    ctx.ellipse(rp.x, rp.y, radiusX, radiusY, 0, 0, Math.PI * 2);
     ctx.stroke();
     rp.r += 0.35;
     rp.a -= 0.013;
@@ -217,7 +221,7 @@ function drawHot() {
   ctx.strokeStyle = "rgba(255,240,200,0.06)";
   for (const h of state.haze) {
     ctx.beginPath();
-    for (let x = 0; x <= canvas.width; x += 24) {
+    for (let x = 0; x <= canvas.width; x += HAZE_SAMPLE_INTERVAL) {
       const y = h.y + Math.sin(x * h.freq + state.t * 0.02 + h.phase) * h.amp;
       if (x === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
@@ -248,12 +252,24 @@ async function detectWeatherCondition() {
     return "calm";
   }
 
+  let geolocationError = null;
   const position = await new Promise((resolve, reject) =>
     navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: GEOLOCATION_TIMEOUT, maximumAge: GEOLOCATION_MAX_AGE })
-  ).catch(() => null);
+  ).catch((error) => {
+    geolocationError = error;
+    return null;
+  });
 
   if (!position) {
-    metaEl.textContent = "Location permission denied, showing calm fallback.";
+    if (geolocationError?.code === 1) {
+      metaEl.textContent = "Location permission denied, showing calm fallback.";
+    } else if (geolocationError?.code === 2) {
+      metaEl.textContent = "Location unavailable, showing calm fallback.";
+    } else if (geolocationError?.code === 3) {
+      metaEl.textContent = "Location request timed out, showing calm fallback.";
+    } else {
+      metaEl.textContent = "Could not read location, showing calm fallback.";
+    }
     return "calm";
   }
 
