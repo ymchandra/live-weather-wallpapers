@@ -4,13 +4,13 @@ This shortcut picks one wallpaper image based on the current weather and sets it
 
 ## 1) Prepare wallpaper files
 
-Copy these files from this repository:
+Copy these files from this repository folder:
 
-- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/hot.png`
-- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/cold.png`
-- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/rain.png`
-- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/wind.png`
-- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/calm.png`
+- `wallpapers/mobile/hot.png`
+- `wallpapers/mobile/cold.png`
+- `wallpapers/mobile/rain.png`
+- `wallpapers/mobile/wind.png`
+- `wallpapers/mobile/calm.png`
 
 to iCloud Drive folder:
 
