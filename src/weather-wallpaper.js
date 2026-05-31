@@ -4,6 +4,11 @@ const conditionEl = document.getElementById("condition");
 const metaEl = document.getElementById("meta");
 
 const QUERY_CONDITION = new URLSearchParams(window.location.search).get("condition");
+const COLD_TEMP_THRESHOLD = 8;
+const HOT_TEMP_THRESHOLD = 30;
+const WIND_SPEED_THRESHOLD = 25;
+const GEOLOCATION_TIMEOUT = 10000;
+const GEOLOCATION_MAX_AGE = 600000;
 
 const THEMES = {
   hot: { label: "Hot", top: "#3a1f1c", bottom: "#e2853c", accent: "#ffd37a" },
@@ -36,9 +41,9 @@ function weatherCodeToCondition({ weatherCode, tempC, windKmh }) {
   const cloudCodes = new Set([1, 2, 3, 45, 48]);
 
   if (rainCodes.has(weatherCode)) return "rain";
-  if (tempC <= 8 || weatherCode === 71 || weatherCode === 73 || weatherCode === 75 || weatherCode === 77 || weatherCode === 85 || weatherCode === 86) return "cold";
-  if (windKmh >= 25) return "wind";
-  if (tempC >= 30 && !cloudCodes.has(weatherCode)) return "hot";
+  if (tempC <= COLD_TEMP_THRESHOLD || weatherCode === 71 || weatherCode === 73 || weatherCode === 75 || weatherCode === 77 || weatherCode === 85 || weatherCode === 86) return "cold";
+  if (windKmh >= WIND_SPEED_THRESHOLD) return "wind";
+  if (tempC >= HOT_TEMP_THRESHOLD && !cloudCodes.has(weatherCode)) return "hot";
   return "calm";
 }
 
@@ -216,7 +221,7 @@ async function detectWeatherCondition() {
   }
 
   const position = await new Promise((resolve, reject) =>
-    navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000, maximumAge: 600000 })
+    navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: GEOLOCATION_TIMEOUT, maximumAge: GEOLOCATION_MAX_AGE })
   ).catch(() => null);
 
   if (!position) {

@@ -14,7 +14,7 @@ The animation is selected automatically using live weather (Open-Meteo + locatio
 
 No build step is required.
 
-1. Open `/tmp/workspace/ymchandra/live-weather-wallpapers/index.html` in a browser.
+1. Open `index.html` in a browser.
 2. Allow location permission.
 3. The page maps current weather to one of the scenes and animates it.
 
@@ -42,6 +42,6 @@ Weather selection logic:
 
 See:
 
-- `/tmp/workspace/ymchandra/live-weather-wallpapers/ios-shortcut/Live-Weather-Wallpaper-Shortcut.md`
+- `ios-shortcut/Live-Weather-Wallpaper-Shortcut.md`
 
 It contains a step-by-step shortcut recipe to switch wallpapers based on current weather.
