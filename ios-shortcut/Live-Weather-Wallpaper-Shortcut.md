@@ -4,15 +4,21 @@ This shortcut picks one wallpaper image based on the current weather and sets it
 
 ## 1) Prepare wallpaper files
 
-Create 5 images in iCloud Drive:
+Copy these files from this repository:
 
-- `Shortcuts/WeatherWallpapers/hot.jpg`
-- `Shortcuts/WeatherWallpapers/cold.jpg`
-- `Shortcuts/WeatherWallpapers/rain.jpg`
-- `Shortcuts/WeatherWallpapers/wind.jpg`
-- `Shortcuts/WeatherWallpapers/calm.jpg`
+- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/hot.png`
+- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/cold.png`
+- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/rain.png`
+- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/wind.png`
+- `/tmp/workspace/ymchandra/live-weather-wallpapers/wallpapers/mobile/calm.png`
 
-Tip: open `index.html?condition=<type>` in Safari and take screenshots if you want matching natural-style artwork.
+to iCloud Drive folder:
+
+- `Shortcuts/WeatherWallpapers/hot.png`
+- `Shortcuts/WeatherWallpapers/cold.png`
+- `Shortcuts/WeatherWallpapers/rain.png`
+- `Shortcuts/WeatherWallpapers/wind.png`
+- `Shortcuts/WeatherWallpapers/calm.png`
 
 ## 2) Build shortcut actions (in this exact order)
 
@@ -39,7 +45,7 @@ Tip: open `index.html?condition=<type>` in Safari and take screenshots if you wa
    - Set variable `Theme` to `wind`
 10. **Otherwise**
     - Set variable `Theme` to Dictionary result (or `calm`)
-11. **Text**: `Shortcuts/WeatherWallpapers/` + *(Insert Variable: Theme)* + `.jpg`
+11. **Text**: `Shortcuts/WeatherWallpapers/` + *(Insert Variable: Theme)* + `.png`
 12. **Get File from Folder** (iCloud Drive) using that text path
 13. **Set Wallpaper Photo** (choose Lock Screen, Home Screen, or both)
 
